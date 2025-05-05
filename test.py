@@ -150,6 +150,15 @@ def concrete_mix_design_IS10262(
     vol_batch_ca20 = vol_ca20_bd / vol_cement_bd if vol_cement_bd else 0
     vol_batch_ca10 = vol_ca10_bd / vol_cement_bd if vol_cement_bd else 0
 
+    wt_batch_water = adopted_wc_ratio  # Water to cement ratio by weight
+    wt_batch_cement = 1
+    wt_batch_sand = mass_fa_ssd / cement_content if cement_content else 0
+    wt_batch_ca20 = weight_ca20 / cement_content if cement_content else 0
+    wt_batch_ca10 = weight_ca10 / cement_content if cement_content else 0
+
+    # Volume batching ratios with water
+    vol_batch_water = water_final / (bulk_density_cement * 1000) / vol_cement_bd if vol_cement_bd else 0
+
     return {
         "Target Strength": round(target_strength, 2),
         "Water-Cement Ratio": {
@@ -193,10 +202,21 @@ def concrete_mix_design_IS10262(
             "Admixture": round(admixture_mass, 2)
         },
         "Batching Ratios and Volumes": {
-            "Weight Batching Ratio": {
-                "Cement": round(cement_ratio, 5),
-                "Sand": round(sand_ratio, 5),
-                "Aggregate": round(agg_ratio, 5)
+            "Weight Batching": {
+                "water": round(wt_batch_water, 2),
+                "cement": wt_batch_cement,
+                "sand": round(wt_batch_sand, 5),
+                "CA20": round(wt_batch_ca20, 5),
+                "CA10": round(wt_batch_ca10, 5),
+                "remarks": "wt. batching"
+            },
+            "Volume Batching": {
+                "water": round(vol_batch_water, 2),
+                "cement": vol_batch_cement,
+                "sand": round(vol_batch_sand, 5),
+                "CA20": round(vol_batch_ca20, 5),
+                "CA10": round(vol_batch_ca10, 5),
+                "remarks": "vol. batching"
             },
             "Volume of Materials (m3)": {
                 "Cement": round(vol_cement_bd, 5),
@@ -216,12 +236,6 @@ def concrete_mix_design_IS10262(
                 "CA20": bulk_density_ca20,
                 "CA10": bulk_density_ca10
             },
-            "Volume Batching Ratio": {
-                "Cement": round(vol_batch_cement, 5),
-                "Sand": round(vol_batch_sand, 5),
-                "CA20": round(vol_batch_ca20, 5),
-                "CA10": round(vol_batch_ca10, 5)
-            }
         }
     }
 
