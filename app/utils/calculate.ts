@@ -161,6 +161,7 @@ export function concreteMixDesignIS10262(input: MixDesignInput): any {
   const vol_batch_sand = vol_cement_bd ? vol_fa_bd / vol_cement_bd : 0;
   const vol_batch_ca20 = vol_cement_bd ? vol_ca20_bd / vol_cement_bd : 0;
   const vol_batch_ca10 = vol_cement_bd ? vol_ca10_bd / vol_cement_bd : 0;
+  const vol_batch_water = vol_cement_bd ? (water_final/1000) / vol_cement_bd : 0;
 
   // Weight batching ratios
   const wt_batch_water = adopted_wc_ratio;  // Water to cement ratio by weight
@@ -170,7 +171,6 @@ export function concreteMixDesignIS10262(input: MixDesignInput): any {
   const wt_batch_ca10 = cement_content ? weight_ca10 / cement_content : 0;
 
   // Volume batching ratios with water
-  const vol_batch_water = vol_cement_bd ? water_final / (bulk_density_cement * 1000) / vol_cement_bd : 0;
 
   return {
     targetStrengthTab: {

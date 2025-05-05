@@ -149,7 +149,7 @@ def concrete_mix_design_IS10262(
     vol_batch_sand = vol_fa_bd / vol_cement_bd if vol_cement_bd else 0
     vol_batch_ca20 = vol_ca20_bd / vol_cement_bd if vol_cement_bd else 0
     vol_batch_ca10 = vol_ca10_bd / vol_cement_bd if vol_cement_bd else 0
-    vol_batch_water = water_final / (bulk_density_cement * 1000) / vol_cement_bd if vol_cement_bd else 0
+    vol_batch_water = (water_final / 1000) / vol_cement_bd if vol_cement_bd else 0
 
     wt_batch_water = adopted_wc_ratio  # Water to cement ratio by weight
     wt_batch_cement = 1

@@ -8,7 +8,6 @@ interface BulkDensityTabProps {
   setInput: React.Dispatch<React.SetStateAction<MixDesignInput>>;
   inputHandler: (input: MixDesignInput, setInput: React.Dispatch<React.SetStateAction<MixDesignInput>>, field: string, value: string | number | boolean) => void;
   result?: {
-    batchingTab?: {
       volumes?: {
         cement?: number;
         fineAgg?: number;
@@ -42,7 +41,6 @@ interface BulkDensityTabProps {
         ca10?: number;
       };
     };
-  };
 }
 
 const BulkDensityTab: React.FC<BulkDensityTabProps> = ({ input, setInput, inputHandler, result }) => {
@@ -56,6 +54,7 @@ const BulkDensityTab: React.FC<BulkDensityTabProps> = ({ input, setInput, inputH
 
   // Recursively check if any result value is NaN (including nested objects)
   function hasAnyNaN(obj: any): boolean {
+    console.log(result)
     if (!obj) return true; // treat missing/undefined result as invalid
     if (typeof obj !== "object") return false;
     return Object.values(obj).some(v =>
@@ -80,18 +79,22 @@ const BulkDensityTab: React.FC<BulkDensityTabProps> = ({ input, setInput, inputH
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4 max-w-lg">
             <div className="font-semibold">Volume of cement</div>
-            <div>{displayValue(result?.batchingTab?.volumes?.cement)} m³</div>
+            <div>{displayValue(result?.volumes?.cement)} m³</div>
             <div className="font-semibold">Volume of fine aggregate</div>
-            <div>{displayValue(result?.batchingTab?.volumes?.fineAgg)} m³</div>
+            <div>{displayValue(result?.volumes?.fineAgg)} m³</div>
+            <div className="font-semibold">Volume of CA20</div>
+            <div>{displayValue(result?.volumes?.ca20)} m³</div>
+            <div className="font-semibold">Volume of CA10</div>
+            <div>{displayValue(result?.volumes?.ca10)} m³</div>
           </div>
           <div className="grid grid-cols-2 gap-4 max-w-lg mt-6">
             <div className="font-semibold">bulk density cement</div>
             <Input type="number" inputMode="decimal" pattern="[0-9]*\.?[0-9]*" step="any" value={input.bulk_density_cement ?? ""} onChange={e => { if (/^\d*\.?\d*$/.test(e.target.value) || e.target.value === '') inputHandler(input, setInput, "bulk_density_cement", e.target.value === '' ? '' : Number(e.target.value)); }} className="w-24" style={{ appearance: 'textfield', MozAppearance: 'textfield', WebkitAppearance: 'textfield' }} />
             <div className="font-semibold">bulk density fine aggregate</div>
             <Input type="number" inputMode="decimal" pattern="[0-9]*\.?[0-9]*" step="any" value={input.bulk_density_fa ?? ""} onChange={e => { if (/^\d*\.?\d*$/.test(e.target.value) || e.target.value === '') inputHandler(input, setInput, "bulk_density_fa", e.target.value === '' ? '' : Number(e.target.value)); }} className="w-24" style={{ appearance: 'textfield', MozAppearance: 'textfield', WebkitAppearance: 'textfield' }} />
-            <div className="font-semibold">bulk density ca20</div>
+            <div className="font-semibold">bulk density CA20</div>
             <Input type="number" inputMode="decimal" pattern="[0-9]*\.?[0-9]*" step="any" value={input.bulk_density_ca20 ?? ""} onChange={e => { if (/^\d*\.?\d*$/.test(e.target.value) || e.target.value === '') inputHandler(input, setInput, "bulk_density_ca20", e.target.value === '' ? '' : Number(e.target.value)); }} className="w-24" style={{ appearance: 'textfield', MozAppearance: 'textfield', WebkitAppearance: 'textfield' }} />
-            <div className="font-semibold">bulk density ca10</div>
+            <div className="font-semibold">bulk density CA10</div>
             <Input type="number" inputMode="decimal" pattern="[0-9]*\.?[0-9]*" step="any" value={input.bulk_density_ca10 ?? ""} onChange={e => { if (/^\d*\.?\d*$/.test(e.target.value) || e.target.value === '') inputHandler(input, setInput, "bulk_density_ca10", e.target.value === '' ? '' : Number(e.target.value)); }} className="w-24" style={{ appearance: 'textfield', MozAppearance: 'textfield', WebkitAppearance: 'textfield' }} />
           </div>
           <div className="grid grid-cols-2 gap-4 max-w-lg mt-6">
@@ -141,25 +144,25 @@ const BulkDensityTab: React.FC<BulkDensityTabProps> = ({ input, setInput, inputH
               <thead>
                 <tr className="bg-gray-200">
                   <th className="border px-4 py-2">Ratio of</th>
-                  <th className="border px-4 py-2">ca20</th>
-                  <th className="border px-4 py-2">ca10</th>
+                  <th className="border px-4 py-2">CA20</th>
+                  <th className="border px-4 py-2">CA10</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
                   <td className="border px-4 py-2">Ratio (%)</td>
-                  <td className="border px-4 py-2">{displayValue(result?.batchingTab?.caSplit?.ca20Fraction)}</td>
-                  <td className="border px-4 py-2">{displayValue(result?.batchingTab?.caSplit?.ca10Fraction)}</td>
+                  <td className="border px-4 py-2">{displayValue((result?.caSplit?.ca20Fraction ?? 0) * 100)}</td>
+                  <td className="border px-4 py-2">{displayValue((result?.caSplit?.ca10Fraction ?? 0) * 100)}</td>
                 </tr>
                 <tr>
                   <td className="border px-4 py-2">Weight (kg)</td>
-                  <td className="border px-4 py-2">{displayValue(result?.batchingTab?.caSplit?.weightCa20)}</td>
-                  <td className="border px-4 py-2">{displayValue(result?.batchingTab?.caSplit?.weightCa10)}</td>
+                  <td className="border px-4 py-2">{displayValue(result?.caSplit?.weightCa20)}</td>
+                  <td className="border px-4 py-2">{displayValue(result?.caSplit?.weightCa10)}</td>
                 </tr>
                 <tr>
                   <td className="border px-4 py-2">Volume (m³)</td>
-                  <td className="border px-4 py-2">{displayValue(result?.batchingTab?.volumes?.ca20)}</td>
-                  <td className="border px-4 py-2">{displayValue(result?.batchingTab?.volumes?.ca10)}</td>
+                  <td className="border px-4 py-2">{displayValue(result?.volumes?.ca20)}</td>
+                  <td className="border px-4 py-2">{displayValue(result?.volumes?.ca10)}</td>
                 </tr>
               </tbody>
             </table>
@@ -171,26 +174,26 @@ const BulkDensityTab: React.FC<BulkDensityTabProps> = ({ input, setInput, inputH
                   <th className="border px-4 py-2">water</th>
                   <th className="border px-4 py-2">cement</th>
                   <th className="border px-4 py-2">sand</th>
-                  <th className="border px-4 py-2">ca20</th>
-                  <th className="border px-4 py-2">ca10</th>
+                  <th className="border px-4 py-2">CA20</th>
+                  <th className="border px-4 py-2">CA10</th>
                   <th className="border px-4 py-2">remarks</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td className="border px-4 py-2">{displayValue(result?.batchingTab?.weightBatchRatios?.water)}</td>
-                  <td className="border px-4 py-2">{displayValue(result?.batchingTab?.weightBatchRatios?.cement)}</td>
-                  <td className="border px-4 py-2">{displayValue(result?.batchingTab?.weightBatchRatios?.sand)}</td>
-                  <td className="border px-4 py-2">{displayValue(result?.batchingTab?.weightBatchRatios?.ca20)}</td>
-                  <td className="border px-4 py-2">{displayValue(result?.batchingTab?.weightBatchRatios?.ca10)}</td>
+                  <td className="border px-4 py-2">{displayValue(result?.weightBatchRatios?.water)}</td>
+                  <td className="border px-4 py-2">{displayValue(result?.weightBatchRatios?.cement)}</td>
+                  <td className="border px-4 py-2">{displayValue(result?.weightBatchRatios?.sand)}</td>
+                  <td className="border px-4 py-2">{displayValue(result?.weightBatchRatios?.ca20)}</td>
+                  <td className="border px-4 py-2">{displayValue(result?.weightBatchRatios?.ca10)}</td>
                   <td className="border px-4 py-2">wt. batching</td>
                 </tr>
                 <tr>
-                  <td className="border px-4 py-2">{displayValue(result?.batchingTab?.volumeBatchRatios?.water)}</td>
-                  <td className="border px-4 py-2">{displayValue(result?.batchingTab?.volumeBatchRatios?.cement)}</td>
-                  <td className="border px-4 py-2">{displayValue(result?.batchingTab?.volumeBatchRatios?.sand)}</td>
-                  <td className="border px-4 py-2">{displayValue(result?.batchingTab?.volumeBatchRatios?.ca20)}</td>
-                  <td className="border px-4 py-2">{displayValue(result?.batchingTab?.volumeBatchRatios?.ca10)}</td>
+                  <td className="border px-4 py-2">{displayValue(result?.volumeBatchRatios?.water)}</td>
+                  <td className="border px-4 py-2">{displayValue(result?.volumeBatchRatios?.cement)}</td>
+                  <td className="border px-4 py-2">{displayValue(result?.volumeBatchRatios?.sand)}</td>
+                  <td className="border px-4 py-2">{displayValue(result?.volumeBatchRatios?.ca20)}</td>
+                  <td className="border px-4 py-2">{displayValue(result?.volumeBatchRatios?.ca10)}</td>
                   <td className="border px-4 py-2">vol. batching</td>
                 </tr>
               </tbody>

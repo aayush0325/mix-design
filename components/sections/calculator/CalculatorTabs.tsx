@@ -102,7 +102,7 @@ export default function CalculatorTabs() {
         </TabsList>
         <div className="pointer-events-none absolute top-0 right-0 h-full w-12 bg-gradient-to-l from-gray-100 dark:from-gray-800 to-transparent" />
       </div>
-      <div className="flex gap-2 mb-4 justify-end">
+      {/* <div className="flex gap-2 mb-4 justify-end">
         <button
           className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
           onClick={() => setShowInput((prev) => !prev)}
@@ -115,7 +115,7 @@ export default function CalculatorTabs() {
         >
           {showResult ? "Hide Result" : "Show Result"}
         </button>
-      </div>
+      </div> */}
       {showInput && (
         <pre className="bg-gray-100 p-3 rounded mb-4 text-xs overflow-x-auto">
           {JSON.stringify(input, null, 2)}
