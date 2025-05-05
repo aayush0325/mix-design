@@ -17,7 +17,7 @@ export function FeaturesSection() {
               <CardTitle>Multiple Design Methods</CardTitle>
             </CardHeader>
             <CardContent>
-              <p>Support for ACI 211, IS 10262, BS 8500, and other international concrete mix design standards.</p>
+              <p>Support for IS 10262 international concrete mix design standards.</p>
             </CardContent>
           </Card>
 

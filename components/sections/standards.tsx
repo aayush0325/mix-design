@@ -11,33 +11,17 @@ export function StandardsSection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <Card>
-            <CardHeader>
-              <CardTitle>IS 10262</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p>Indian Standard method for concrete mix design using Indian materials and conditions.</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>ACI 211</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p>American Concrete Institute method for proportioning normal, heavyweight, and mass concrete.</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>BS 8500</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p>British Standard for concrete mix design methodology for various exposure classes.</p>
-            </CardContent>
-          </Card>
+        <div className="flex justify-center">
+          <div className="max-w-md">
+            <Card>
+              <CardHeader>
+                <CardTitle>IS 10262</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p>Indian Standard method for concrete mix design using Indian materials and conditions.</p>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </section>
