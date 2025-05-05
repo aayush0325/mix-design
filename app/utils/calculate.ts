@@ -156,10 +156,21 @@ export function concreteMixDesignIS10262(input: MixDesignInput): any {
   const vol_ca20_bd = weight_ca20 / (bulk_density_ca20 * 1000);
   const vol_ca10_bd = weight_ca10 / (bulk_density_ca10 * 1000);
 
+  // Volume batching ratios (all divided by cement volume)
   const vol_batch_cement = 1;
   const vol_batch_sand = vol_cement_bd ? vol_fa_bd / vol_cement_bd : 0;
   const vol_batch_ca20 = vol_cement_bd ? vol_ca20_bd / vol_cement_bd : 0;
   const vol_batch_ca10 = vol_cement_bd ? vol_ca10_bd / vol_cement_bd : 0;
+
+  // Weight batching ratios
+  const wt_batch_water = adopted_wc_ratio;  // Water to cement ratio by weight
+  const wt_batch_cement = 1;
+  const wt_batch_sand = cement_content ? mass_fa_ssd / cement_content : 0;
+  const wt_batch_ca20 = cement_content ? weight_ca20 / cement_content : 0;
+  const wt_batch_ca10 = cement_content ? weight_ca10 / cement_content : 0;
+
+  // Volume batching ratios with water
+  const vol_batch_water = vol_cement_bd ? water_final / (bulk_density_cement * 1000) / vol_cement_bd : 0;
 
   return {
     targetStrengthTab: {
@@ -222,11 +233,6 @@ export function concreteMixDesignIS10262(input: MixDesignInput): any {
       waterCementRatio: adopted_wc_ratio,
     },
     batchingTab: {
-      weightRatio: {
-        cement: cement_ratio,
-        sand: sand_ratio,
-        agg: agg_ratio,
-      },
       volumes: {
         cement: vol_cement_bd,
         fineAgg: vol_fa_bd,
@@ -245,12 +251,20 @@ export function concreteMixDesignIS10262(input: MixDesignInput): any {
         CA20: bulk_density_ca20,
         CA10: bulk_density_ca10,
       },
-      volumeRatio: {
-        cement: vol_batch_cement,
-        sand: vol_batch_sand,
-        CA20: vol_batch_ca20,
-        CA10: vol_batch_ca10,
+      volumeBatchRatios: {
+        water: parseFloat(vol_batch_water.toFixed(3)),
+        cement: parseFloat(vol_batch_cement.toFixed(3)),
+        sand: parseFloat(vol_batch_sand.toFixed(3)),
+        ca20: parseFloat(vol_batch_ca20.toFixed(3)),
+        ca10: parseFloat(vol_batch_ca10.toFixed(3))
       },
+      weightBatchRatios: {
+        water: parseFloat(wt_batch_water.toFixed(3)),
+        cement: parseFloat(wt_batch_cement.toFixed(3)),
+        sand: parseFloat(wt_batch_sand.toFixed(3)),
+        ca20: parseFloat(wt_batch_ca20.toFixed(3)),
+        ca10: parseFloat(wt_batch_ca10.toFixed(3))
+      }
     },
   };
 }
