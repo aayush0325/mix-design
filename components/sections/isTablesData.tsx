@@ -148,33 +148,6 @@ export const IS_TABLES = [
     },
   },
   {
-    id: 'is-table-standard-deviation',
-    label: 'IS Table: Standard Deviation',
-    content: {
-      title: 'Standard Deviation for Different Grades',
-      headers: [
-        'Grade',
-        'Standard Deviation (s)',
-      ],
-      rows: [
-        ['10', '3.5'],
-        ['15', '3.5'],
-        ['20', '4'],
-        ['25', '4'],
-        ['30', '5'],
-        ['35', '5'],
-        ['40', '5'],
-        ['45', '5'],
-        ['50', '5'],
-        ['55', '5'],
-        ['60', '5'],
-        ['70', '6'],
-        ['75', '6'],
-        ['80', '6'],
-      ],
-    },
-  },
-  {
     id: 'is-table-min-cement-content',
     label: 'IS Table: Minimum Cement Content, Maximum Water-Cement Ratio',
     content: {
