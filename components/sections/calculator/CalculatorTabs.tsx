@@ -64,8 +64,8 @@ export default function CalculatorTabs() {
     bulk_density_fa: 0,
     bulk_density_ca20: 0,
     bulk_density_ca10: 0,
-    ca20_fraction: 0,
-    ca10_fraction: 0,
+    ca20_fraction: 0.60,
+    ca10_fraction: 0.40,
   });
   const [result, setResult] = useState<CalculatorResult | null>(null);
 

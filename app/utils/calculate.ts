@@ -236,20 +236,20 @@ export function concreteMixDesignIS10262(input: MixDesignInput): any {
       volumes: {
         cement: vol_cement_bd,
         fineAgg: vol_fa_bd,
-        CA20: vol_ca20_bd,
-        CA10: vol_ca10_bd,
+        ca20: vol_ca20_bd,
+        ca10: vol_ca10_bd,
       },
       caSplit: {
         ca20Fraction: ca20_fraction,
         ca10Fraction: ca10_fraction,
-        weightCA20: weight_ca20,
-        weightCA10: weight_ca10,
+        weightCa20: weight_ca20,
+        weightCa10: weight_ca10,
       },
       bulkDensities: {
         cement: bulk_density_cement,
         fineAgg: bulk_density_fa,
-        CA20: bulk_density_ca20,
-        CA10: bulk_density_ca10,
+        ca20: bulk_density_ca20,
+        ca10: bulk_density_ca10,
       },
       volumeBatchRatios: {
         water: parseFloat(vol_batch_water.toFixed(3)),

@@ -8,35 +8,39 @@ interface BulkDensityTabProps {
   setInput: React.Dispatch<React.SetStateAction<MixDesignInput>>;
   inputHandler: (input: MixDesignInput, setInput: React.Dispatch<React.SetStateAction<MixDesignInput>>, field: string, value: string | number | boolean) => void;
   result?: {
-    weightRatio?: {
-      cement?: number;
-      sand?: number;
-      agg?: number;
-    };
-    volumes?: {
-      cement?: number;
-      fineAgg?: number;
-      CA20?: number;
-      CA10?: number;
-    };
-    caSplit?: {
-      ca20Fraction?: number;
-      ca10Fraction?: number;
-      weightCA20?: number;
-      weightCA10?: number;
-    };
-    bulkDensities?: {
-      cement?: number;
-      fineAgg?: number;
-      CA20?: number;
-      CA10?: number;
-    };
-    volumeRatio?: {
-      water?: number;
-      cement?: number;
-      sand?: number;
-      CA20?: number;
-      CA10?: number;
+    batchingTab?: {
+      volumes?: {
+        cement?: number;
+        fineAgg?: number;
+        ca20?: number;
+        ca10?: number;
+      };
+      caSplit?: {
+        ca20Fraction?: number;
+        ca10Fraction?: number;
+        weightCa20?: number;
+        weightCa10?: number;
+      };
+      bulkDensities?: {
+        cement?: number;
+        fineAgg?: number;
+        ca20?: number;
+        ca10?: number;
+      };
+      volumeBatchRatios?: {
+        water?: number;
+        cement?: number;
+        sand?: number;
+        ca20?: number;
+        ca10?: number;
+      };
+      weightBatchRatios?: {
+        water?: number;
+        cement?: number;
+        sand?: number;
+        ca20?: number;
+        ca10?: number;
+      };
     };
   };
 }
@@ -49,6 +53,7 @@ const BulkDensityTab: React.FC<BulkDensityTabProps> = ({ input, setInput, inputH
     if (typeof val === "string" && (val === "NaN" || val === "Infinity" || val === "-Infinity" || val.trim() === "")) return "-";
     return val;
   }
+
   // Recursively check if any result value is NaN (including nested objects)
   function hasAnyNaN(obj: any): boolean {
     if (!obj) return true; // treat missing/undefined result as invalid
@@ -75,44 +80,86 @@ const BulkDensityTab: React.FC<BulkDensityTabProps> = ({ input, setInput, inputH
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4 max-w-lg">
             <div className="font-semibold">Volume of cement</div>
-            <div>{displayValue(result?.volumes?.cement ?? (input.bulk_density_cement && result?.weightRatio?.cement ? (result.weightRatio.cement / input.bulk_density_cement).toFixed(5) : "-"))} m³</div>
+            <div>{displayValue(result?.batchingTab?.volumes?.cement)} m³</div>
             <div className="font-semibold">Volume of fine aggregate</div>
-            <div>{displayValue(result?.volumes?.fineAgg ?? (input.bulk_density_fa && result?.weightRatio?.sand ? (result.weightRatio.sand / input.bulk_density_fa).toFixed(5) : "-"))} m³</div>
+            <div>{displayValue(result?.batchingTab?.volumes?.fineAgg)} m³</div>
           </div>
           <div className="grid grid-cols-2 gap-4 max-w-lg mt-6">
             <div className="font-semibold">bulk density cement</div>
             <Input type="number" inputMode="decimal" pattern="[0-9]*\.?[0-9]*" step="any" value={input.bulk_density_cement ?? ""} onChange={e => { if (/^\d*\.?\d*$/.test(e.target.value) || e.target.value === '') inputHandler(input, setInput, "bulk_density_cement", e.target.value === '' ? '' : Number(e.target.value)); }} className="w-24" style={{ appearance: 'textfield', MozAppearance: 'textfield', WebkitAppearance: 'textfield' }} />
             <div className="font-semibold">bulk density fine aggregate</div>
             <Input type="number" inputMode="decimal" pattern="[0-9]*\.?[0-9]*" step="any" value={input.bulk_density_fa ?? ""} onChange={e => { if (/^\d*\.?\d*$/.test(e.target.value) || e.target.value === '') inputHandler(input, setInput, "bulk_density_fa", e.target.value === '' ? '' : Number(e.target.value)); }} className="w-24" style={{ appearance: 'textfield', MozAppearance: 'textfield', WebkitAppearance: 'textfield' }} />
-            <div className="font-semibold">bulk density CA20</div>
+            <div className="font-semibold">bulk density ca20</div>
             <Input type="number" inputMode="decimal" pattern="[0-9]*\.?[0-9]*" step="any" value={input.bulk_density_ca20 ?? ""} onChange={e => { if (/^\d*\.?\d*$/.test(e.target.value) || e.target.value === '') inputHandler(input, setInput, "bulk_density_ca20", e.target.value === '' ? '' : Number(e.target.value)); }} className="w-24" style={{ appearance: 'textfield', MozAppearance: 'textfield', WebkitAppearance: 'textfield' }} />
-            <div className="font-semibold">bulk density CA10</div>
+            <div className="font-semibold">bulk density ca10</div>
             <Input type="number" inputMode="decimal" pattern="[0-9]*\.?[0-9]*" step="any" value={input.bulk_density_ca10 ?? ""} onChange={e => { if (/^\d*\.?\d*$/.test(e.target.value) || e.target.value === '') inputHandler(input, setInput, "bulk_density_ca10", e.target.value === '' ? '' : Number(e.target.value)); }} className="w-24" style={{ appearance: 'textfield', MozAppearance: 'textfield', WebkitAppearance: 'textfield' }} />
+          </div>
+          <div className="grid grid-cols-2 gap-4 max-w-lg mt-6">
+            <div className="font-semibold">ca20 fraction (0-1)</div>
+            <Input 
+              type="number" 
+              inputMode="decimal" 
+              pattern="[0-9]*\.?[0-9]*" 
+              step="0.01" 
+              min="0" 
+              max="1"
+              value={input.ca20_fraction} 
+              onChange={e => {
+                const value = e.target.value === '' ? 0 : Number(e.target.value);
+                if (value >= 0 && value <= 1) {
+                  inputHandler(input, setInput, "ca20_fraction", value);
+                  // Update ca10_fraction to complement ca20_fraction
+                  inputHandler(input, setInput, "ca10_fraction", 1 - value);
+                }
+              }}
+              className="w-24" 
+              style={{ appearance: 'textfield', MozAppearance: 'textfield', WebkitAppearance: 'textfield' }} 
+            />
+            <div className="font-semibold">ca10 fraction (0-1)</div>
+            <Input 
+              type="number" 
+              inputMode="decimal" 
+              pattern="[0-9]*\.?[0-9]*" 
+              step="0.01" 
+              min="0" 
+              max="1"
+              value={input.ca10_fraction}
+              onChange={e => {
+                const value = e.target.value === '' ? 0 : Number(e.target.value);
+                if (value >= 0 && value <= 1) {
+                  inputHandler(input, setInput, "ca10_fraction", value);
+                  // Update ca20_fraction to complement ca10_fraction
+                  inputHandler(input, setInput, "ca20_fraction", 1 - value);
+                }
+              }}
+              className="w-24" 
+              style={{ appearance: 'textfield', MozAppearance: 'textfield', WebkitAppearance: 'textfield' }} 
+            />
           </div>
           <div className="mt-8">
             <table className="w-full text-base border">
               <thead>
                 <tr className="bg-gray-200">
                   <th className="border px-4 py-2">Ratio of</th>
-                  <th className="border px-4 py-2">CA20</th>
-                  <th className="border px-4 py-2">CA10</th>
+                  <th className="border px-4 py-2">ca20</th>
+                  <th className="border px-4 py-2">ca10</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
                   <td className="border px-4 py-2">Ratio (%)</td>
-                  <td className="border px-4 py-2">{displayValue(result?.caSplit?.ca20Fraction ?? 60)}</td>
-                  <td className="border px-4 py-2">{displayValue(result?.caSplit?.ca10Fraction ?? 40)}</td>
+                  <td className="border px-4 py-2">{displayValue(result?.batchingTab?.caSplit?.ca20Fraction)}</td>
+                  <td className="border px-4 py-2">{displayValue(result?.batchingTab?.caSplit?.ca10Fraction)}</td>
                 </tr>
                 <tr>
                   <td className="border px-4 py-2">Weight (kg)</td>
-                  <td className="border px-4 py-2">{displayValue(result?.caSplit?.weightCA20 ?? (result?.weightRatio?.agg ? (result.weightRatio.agg * (result?.caSplit?.ca20Fraction ?? 60) / 100).toFixed(2) : "-"))}</td>
-                  <td className="border px-4 py-2">{displayValue(result?.caSplit?.weightCA10 ?? (result?.weightRatio?.agg ? (result.weightRatio.agg * (result?.caSplit?.ca10Fraction ?? 40) / 100).toFixed(2) : "-"))}</td>
+                  <td className="border px-4 py-2">{displayValue(result?.batchingTab?.caSplit?.weightCa20)}</td>
+                  <td className="border px-4 py-2">{displayValue(result?.batchingTab?.caSplit?.weightCa10)}</td>
                 </tr>
                 <tr>
                   <td className="border px-4 py-2">Volume (m³)</td>
-                  <td className="border px-4 py-2">{displayValue(result?.volumes?.CA20 ?? (input.bulk_density_ca20 && result?.weightRatio?.agg ? ((result.weightRatio.agg * (result?.caSplit?.ca20Fraction ?? 60) / 100) / input.bulk_density_ca20).toFixed(5) : "-"))}</td>
-                  <td className="border px-4 py-2">{displayValue(result?.volumes?.CA10 ?? (input.bulk_density_ca10 && result?.weightRatio?.agg ? ((result.weightRatio.agg * (result?.caSplit?.ca10Fraction ?? 40) / 100) / input.bulk_density_ca10).toFixed(5) : "-"))}</td>
+                  <td className="border px-4 py-2">{displayValue(result?.batchingTab?.volumes?.ca20)}</td>
+                  <td className="border px-4 py-2">{displayValue(result?.batchingTab?.volumes?.ca10)}</td>
                 </tr>
               </tbody>
             </table>
@@ -124,26 +171,26 @@ const BulkDensityTab: React.FC<BulkDensityTabProps> = ({ input, setInput, inputH
                   <th className="border px-4 py-2">water</th>
                   <th className="border px-4 py-2">cement</th>
                   <th className="border px-4 py-2">sand</th>
-                  <th className="border px-4 py-2">CA20</th>
-                  <th className="border px-4 py-2">CA10</th>
+                  <th className="border px-4 py-2">ca20</th>
+                  <th className="border px-4 py-2">ca10</th>
                   <th className="border px-4 py-2">remarks</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td className="border px-4 py-2">{displayValue(result?.volumeRatio?.water ?? 0.4)}</td>
-                  <td className="border px-4 py-2">{displayValue(result?.volumeRatio?.cement ?? 1)}</td>
-                  <td className="border px-4 py-2">{displayValue(result?.volumeRatio?.sand ?? 1.43212)}</td>
-                  <td className="border px-4 py-2">{displayValue(result?.volumeRatio?.CA20 ?? 1.53336)}</td>
-                  <td className="border px-4 py-2">{displayValue(result?.volumeRatio?.CA10 ?? 1.02224)}</td>
+                  <td className="border px-4 py-2">{displayValue(result?.batchingTab?.weightBatchRatios?.water)}</td>
+                  <td className="border px-4 py-2">{displayValue(result?.batchingTab?.weightBatchRatios?.cement)}</td>
+                  <td className="border px-4 py-2">{displayValue(result?.batchingTab?.weightBatchRatios?.sand)}</td>
+                  <td className="border px-4 py-2">{displayValue(result?.batchingTab?.weightBatchRatios?.ca20)}</td>
+                  <td className="border px-4 py-2">{displayValue(result?.batchingTab?.weightBatchRatios?.ca10)}</td>
                   <td className="border px-4 py-2">wt. batching</td>
                 </tr>
                 <tr>
-                  <td className="border px-4 py-2">{displayValue(result?.volumeRatio?.water ?? 0.52)}</td>
-                  <td className="border px-4 py-2">{displayValue(result?.volumeRatio?.cement ?? 1)}</td>
-                  <td className="border px-4 py-2">{displayValue(result?.volumeRatio?.sand ?? 1.05781)}</td>
-                  <td className="border px-4 py-2">{displayValue(result?.volumeRatio?.CA20 ?? 1.24585)}</td>
-                  <td className="border px-4 py-2">{displayValue(result?.volumeRatio?.CA10 ?? 0.85736)}</td>
+                  <td className="border px-4 py-2">{displayValue(result?.batchingTab?.volumeBatchRatios?.water)}</td>
+                  <td className="border px-4 py-2">{displayValue(result?.batchingTab?.volumeBatchRatios?.cement)}</td>
+                  <td className="border px-4 py-2">{displayValue(result?.batchingTab?.volumeBatchRatios?.sand)}</td>
+                  <td className="border px-4 py-2">{displayValue(result?.batchingTab?.volumeBatchRatios?.ca20)}</td>
+                  <td className="border px-4 py-2">{displayValue(result?.batchingTab?.volumeBatchRatios?.ca10)}</td>
                   <td className="border px-4 py-2">vol. batching</td>
                 </tr>
               </tbody>
