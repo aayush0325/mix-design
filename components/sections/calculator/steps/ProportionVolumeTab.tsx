@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { MixDesignInput } from "@/app/utils/calculate";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface ProportionVolumeTabProps {
   input: MixDesignInput;
@@ -86,7 +87,17 @@ export default function ProportionVolumeTab(props: ProportionVolumeTabProps) {
             </div>
             <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-md flex flex-col">
               <p className={fieldHeadingClass}>Fine Aggregate Zone</p>
-              <span className="text-3xl font-bold text-gray-900 mt-2">{displayValue(result?.zone ?? `Zone ${zone}`)}</span>
+              <Select value={props.input.fa_zone} onValueChange={(value) => props.inputHandler(props.input, props.setInput, "fa_zone", value)}>
+                <SelectTrigger className="mt-2 bg-white text-xl py-3">
+                  <SelectValue placeholder="Select zone" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="I">Zone I</SelectItem>
+                  <SelectItem value="II">Zone II</SelectItem>
+                  <SelectItem value="III">Zone III</SelectItem>
+                  <SelectItem value="IV">Zone IV</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-md flex flex-col">
               <p className={fieldHeadingClass}>Corrected Volume of CA</p>
